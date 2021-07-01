@@ -29,24 +29,27 @@ require_relative "keycloak-admin/resource/user_resource"
 
 module KeycloakAdmin
 
-  def self.configure
-    yield @configuration ||= KeycloakAdmin::Configuration.new
+  def self.configure(config_id=0)
+    @configurations ||= {}
+    yield @configurations[config_id] ||= KeycloakAdmin::Configuration.new
+    @configurations[config_id].config_id = config_id
   end
 
-  def self.config
-    @configuration
+  def self.config(config_id=0)
+    @configurations[config_id]
   end
 
-  def self.realm(realm_name)
-    RealmClient.new(@configuration, realm_name)
+  def self.realm(realm_name, config_id=0)
+    RealmClient.new(@configurations[config_id], realm_name)
   end
 
   def self.logger
     config.logger
   end
 
-  def self.load_configuration
-    configure do |config|
+  def self.load_configuration(config_id=0)
+    configure(config_id) do |config|
+      config.config_id           = config_id
       config.server_url          = nil
       config.server_domain       = nil
       config.client_realm_name   = ""

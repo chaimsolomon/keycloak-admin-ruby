@@ -10,7 +10,7 @@ module KeycloakAdmin
     end
 
     def current_token
-      @current_token ||= KeycloakAdmin.realm(@configuration.client_realm_name).token.get
+      @current_token ||= KeycloakAdmin.realm(@configuration.client_realm_name, @configuration.config_id).token.get
     end
 
     def headers
